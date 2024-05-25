@@ -13,6 +13,7 @@ const RegisterScreen = ({ navigation }) => {
     updateToken(email)
 
   }
+  
 
   return (
     <SafeAreaView>

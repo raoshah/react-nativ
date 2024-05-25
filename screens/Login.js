@@ -12,10 +12,33 @@ const LoginScreen = ({ navigation: { navigate } }) => {
   const [password, setPassword] = useState(''); 
   const { token, updateToken } = useContext(AuthContext);
 
-  const onSign = () => {
-    updateToken(email)
+  const onSign = (accessToken) => {
+    updateToken(accessToken)
 
   }
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('https://raoshah.pythonanywhere.com/token/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to register');
+      }
+
+      const responseData = await response.json();
+      console.log('Registration successful:', responseData);
+      onSign(responseData.access)
+      
+    } catch (error) {
+      console.error('Faild to Login: invalid email or password');
+
+    }
+  };
 
   return (
     <SafeAreaView>
@@ -40,7 +63,7 @@ const LoginScreen = ({ navigation: { navigate } }) => {
         <View>
           <Text style={styles.forgotPassword}>Forgot your password ?</Text>
         </View>
-        <TouchableOpacity onPress={onSign} style={styles.button}>
+        <TouchableOpacity onPress={handleSubmit} style={styles.button}>
           <Text style={styles.buttonText}>Log in</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigate("Register")} style={styles.link}>
